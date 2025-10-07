@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+    }
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+    #result {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    #history {
+        margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rock-Paper-Scissors</h1>
+  
+  <div>
+    <button onclick="play('rock')">Rock</button>
+    <button onclick="play('paper')">Paper</button>
+    <button onclick="play('scissors')">Scissors</button>
+  </div>
+
+  <div id="result"></div>
+
+  <div>
+    <button onclick="showHistory()">History</button>
+    <button onclick="resetGame()">Reset</button>
+  </div>
+
+  <div id="history"></div>
+
+  <script>
+    let gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
+
+    function play(userChoice) {
+      const choices = ['rock', 'paper', 'scissors'];
+      const computerChoice = choices[Math.floor(Math.random() * 3)];
+      let result = '';
+
+      if (userChoice === computerChoice) {
+        result = `It's a draw! You: ${userChoice}, Computer: ${computerChoice}`;
+      } else if (
+        (userChoice === 'rock' && computerChoice === 'scissors') ||
+        (userChoice === 'paper' && computerChoice === 'rock') ||
+        (userChoice === 'scissors' && computerChoice === 'paper')
+      ) {
+        result = `You win! You: ${userChoice}, Computer: ${computerChoice}`;
+      } else {
+        result = `You lose! You: ${userChoice}, Computer: ${computerChoice}`;
+      }
+
+      document.getElementById('result').textContent = result;
+
+      gameHistory.push(result);
+      localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+    }
+
+    function showHistory() {
+      if (gameHistory.length === 0) {
+        document.getElementById('history').textContent = "No games played yet.";
+      } else {
+        document.getElementById('history').innerHTML = "<h3>Game History:</h3><ul>" +
+          gameHistory.map(r => `<li>${r}</li>`).join('') + "</ul>";
+      }
+    }
+
+    function resetGame() {
+      gameHistory = [];
+      localStorage.removeItem('gameHistory');
+      document.getElementById('result').textContent = '';
+      document.getElementById('history').textContent = '';
+    }
+  </script>
+</body>
+</html>
